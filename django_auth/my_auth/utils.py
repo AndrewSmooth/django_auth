@@ -1,10 +1,15 @@
 import jwt
+import datetime
+import uuid
 
+from django_auth.config import JWT_SECRET
 
-def get_access_token(payload: dict, secret: str, algorithm: str = "HS256"):
-    access_token = jwt.encode({"some": "payload"}, "secret", algorithm)
+def get_access_token(payload: dict, secret: str=JWT_SECRET, algorithm: str = "HS256"):
+    time = datetime.datetime.now()
+    payload["iat"] = time
+    payload["exp"] =  time + datetime.timedelta(0, 30)
+    access_token = jwt.encode(payload, secret, algorithm)
     return access_token
 
-# print(encoded)
-# decoded = jwt.decode(encoded, "secret", algorithms=["HS256"])
-# print(decoded)
+def get_refresh_token():
+    return uuid.uuid4()
